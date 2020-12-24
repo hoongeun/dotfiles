@@ -1,6 +1,6 @@
 # !/bin/sh
 
-sudo apt update -qq
+sudo apt -qq update
 sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
 cd
 git clone --depth 1 https://github.com/hoongeun/dotfiles
@@ -32,8 +32,7 @@ sudo apt install -qqy git g++ libgtk-3-dev gtk-doc-tools gnutls-bin valac intlto
 git clone https://github.com/thestinger/vte-ng.git
 echo export --depth 1 LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
 cd vte-ng
-./autogen.sh
-make -j && sudo make install
+./autogen.sh && make -j && sudo make install
 cd ~/dotfiles/downloads
 git clone --depth 1 --recursive https://github.com/thestinger/termite.git
 cd termite
@@ -51,9 +50,7 @@ cd ~/dotfiles/downloads
 sudo apt install -qqy texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev
 git clone --depth 1 https://git.savannah.gnu.org/git/emacs.git -b emacs-27
 cd emacs
-./autogen.sh
-./configure
-make -j && sudo make install
+./autogen.sh && ./configure && make -j && sudo make install
 
 echo "===================================="
 echo "[done]: emacs"
@@ -62,11 +59,11 @@ echo "===================================="
 # ripgrep
 cd ~/dotfiles/downloads
 curl -o ripgrep.deb -sL https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb
-sudo dpkg -i ripgrep.deb
+sudo dpkg -i ripgrep.deb 2> /dev/null
 
 # fd
 curl -o fd.deb -sL https://github.com/sharkdp/fd/releases/download/v8.2.1/fd_8.2.1_amd64.deb
-sudo dpkg -i fd.deb
+sudo dpkg -i fd.deb 2> /dev/null
 
 # doom
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
@@ -113,7 +110,7 @@ echo "===================================="
 
 # go
 curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
-. /home/hoon/.gvm/scripts/gvm
+source "$HOME/.gvm/scripts/gvm"
 gvm install go1.4 -B
 gvm use go1.4
 export GOROOT_BOOTSTRAP=$GOROOT
@@ -143,7 +140,7 @@ echo "===================================="
 
 # rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none
-
+source $HOME/.cargo/env
 echo "===================================="
 echo "[done]: rust"
 echo "===================================="
@@ -151,7 +148,7 @@ echo "===================================="
 # bat
 cd ~/dotfiles/downloads
 curl -o bat.deb -sSL https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
-sudo dpkg -i bat.deb
+sudo dpkg -i bat.deb 2> /dev/nul
 
 echo "===================================="
 echo "[done]: bat"
@@ -173,10 +170,10 @@ echo "[done]: docker"
 echo "===================================="
 
 # typora
-wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
+curl -sSL https://typora.io/linux/public-key.asc | sudo apt-key add -
 sudo add-apt-repository 'deb https://typora.io/linux ./'
 sudo apt -qq update
-sudo apt install -qq typora
+sudo apt install -qqy typora
 
 echo "===================================="
 echo "[done]: typora"
@@ -196,7 +193,7 @@ echo "===================================="
 curl -sSL https://build.opensuse.org/projects/home:manuelschneid3r/public_key | sudo apt-key add -
 echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
 sudo -sSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_20.04/Release.key -O "/etc/apt/trusted.gpg.d/home:manuelschneid3r.asc"
-sudo apt update --qq
+sudo apt -qq update
 sudo apt install -qqy albert
 
 echo "===================================="
@@ -206,7 +203,7 @@ echo "===================================="
 # chrome
 cd ~/dotfiles/downloads
 curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb
-sudo dpkg -i chrome.deb
+sudo dpkg -i chrome.deb 2> /dev/null
 
 echo "===================================="
 echo "[done]: google chrome"
@@ -215,7 +212,7 @@ echo "===================================="
 # vscodium
 cd ~/dotfiles/downloads
 curl -o vscodium.deb -sSL https://github.com/VSCodium/vscodium/releases/download/1.52.1/codium_1.52.1-1608165473_amd64.deb
-sudo dpkg -i vscodium.deb
+sudo dpkg -i vscodium.deb 2> /dev/null
 
 echo "===================================="
 echo "[done]: vscodium"

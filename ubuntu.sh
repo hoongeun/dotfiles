@@ -1,9 +1,7 @@
 # !/bin/sh
 
-sudo add-apt-repository ppa:kelleyk/emacs
-wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt install -y git ripgrep emacs27 openssh curl fish bat tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo curl
+sudo apt update
+sudo apt install -y git curl fish tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo 
 cd
 git clone https://github.com/hoongeun/dotfiles
 
@@ -40,10 +38,33 @@ sudo mkdir -p /lib/terminfo/x
 sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
 sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60
 
-# doom
+# emcas27
+cd ~/dotfiles/downloads
+sudo apt install -y texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev
+git clone https://git.savannah.gnu.org/git/emacs.git
+git checkout emacs-27
+./autogen.sh
+./configure
+make -j
+sudo make install
+
+# ripgrep
+cd ~/dotfiles/downloads
+curl -o ripgrep.deb -s https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb
+sudo dpkg -i ripgrep.deb
+
+# fd
+curl -o fd.deb -s https://github.com/sharkdp/fd/releases/download/v8.2.1/fd_8.2.1_amd64.deb
+sudo dpkg -i fd.deb
+
+# doom                        
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
+cp -rf ~/dotfiles/home/.doom.d ~/
 ~/.emacs.d/bin/doom sync
+
+## ripgrep
+curl -os 
 
 # starship
 curl -fsSL https://starship.rs/install.sh | bash
@@ -80,6 +101,11 @@ make -j
 sudo make install
 curl https://bootstrap.pypa.io/get-pip.py | python3
 rm -rf /workspace/local/Python-3.9.1*
+
+# bat
+cd ~/dotfiles/downloads
+curl -o bat.deb https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_arm64.deb
+sudo dpkg -i bat.deb
 
 # git
 git config --global user.name "Hoongeun Cho"

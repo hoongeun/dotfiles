@@ -3,9 +3,27 @@
 sudo add-apt-repository ppa:kelleyk/emacs
 wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
 sudo apt-get update
-sudo apt install -y git termite ripgrep emacs27 openssh curl fish bat tmux i3 flameshot conky
+sudo apt install -y git ripgrep emacs27 openssh curl fish bat tmux i3 flameshot conky build-essential
 cd
 git clone https://github.com/hoongeun/dotfiles
+
+# termite
+cd ~/dotfiles/downloads
+sudo apt install -y git g++ libgtk-3-dev gtk-doc-tools gnutls-bin valac intltool libpcre2-dev libglib3.0-cil-dev libgnutls28-dev libgirepository1.0-dev libxml2-utils gperf
+git clone https://github.com/thestinger/vte-ng.git
+echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
+cd vte-ng
+./autogen.sh
+make && sudo make install
+cd ~/dotfiles/downloads
+git clone --recursive https://github.com/thestinger/termite.git
+cd termite
+make
+sudo make install
+sudo ldconfig
+sudo mkdir -p /lib/terminfo/x
+sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
+sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60
 
 # doom
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
@@ -39,7 +57,7 @@ gvm use go1.15.5 --default
 # python
 sudo apt install -y build-essential python-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
 cd ~/dotfiles/downloads/
-curl -o python.tgz https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
+curl -sSL -o python.tgz https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
 tar -xvf python.tgz
 cd Python-3.9.1
 ./configure
@@ -68,14 +86,14 @@ ln -s -f .tmux/.tmux.conf
 cp .tmux/.tmux.conf.local .
 
 # albert
-curl https://build.opensuse.org/projects/home:manuelschneid3r/public_key | sudo apt-key add -
+curl -sSL https://build.opensuse.org/projects/home:manuelschneid3r/public_key | sudo apt-key add -
 echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
-sudo wget -nv https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_20.04/Release.key -O "/etc/apt/trusted.gpg.d/home:manuelschneid3r.asc"
+sudo -sSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_20.04/Release.key -O "/etc/apt/trusted.gpg.d/home:manuelschneid3r.asc"
 sudo apt update
 sudo apt install albert
 
 # chrome
-wget -q -O-https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add-
+curl -sSL -O-https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add-
 sudo sh -c 'echo "deb [arch = amd64] http://dl.google.com/linux/chrome/deb/ stable main">> /etc/apt/sources.list.d/google-chrome.list '
 sudo apt update
 sudo apt install google-chrome-stable

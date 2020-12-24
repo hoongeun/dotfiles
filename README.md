@@ -6,5 +6,5 @@ My personal development environment configration script
 ## usage
 
 ```sh
-
+curl -sSL https://raw.githubusercontent.com/hoongeun/dotfiles/main/ubuntu.sh | sh
 ```

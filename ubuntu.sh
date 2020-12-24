@@ -14,11 +14,11 @@ git clone https://github.com/thestinger/vte-ng.git
 echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
 cd vte-ng
 ./autogen.sh
-make && sudo make install
+make -j && sudo make install
 cd ~/dotfiles/downloads
 git clone --recursive https://github.com/thestinger/termite.git
 cd termite
-make
+make -j
 sudo make install
 sudo ldconfig
 sudo mkdir -p /lib/terminfo/x
@@ -100,8 +100,8 @@ sudo apt install google-chrome-stable
 
 # vscodium
 cd ~/dotfiles/downloads
-curl -o vscodium.tar.gz https://github.com/VSCodium/vscodium/releases/download/1.52.1/VSCodium-linux-arm64-1.52.1.tar.gz
-tar -xzf vscodium.tar.gz
+curl -o vscodium.deb https://github.com/VSCodium/vscodium/releases/download/1.52.1/codium_1.52.1-1608165473_amd64.deb
+sudo dpkg -i vscodium.deb
 
 # overwrite
 cp -rf ~/dotfiles/home/.* ~/

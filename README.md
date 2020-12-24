@@ -5,6 +5,7 @@ My personal development environment configration script \
 
 ## usage
 
+### ubuntu(>= 18.10)
 ```sh
-curl -sSL https://raw.githubusercontent.com/hoongeun/dotfiles/main/ubuntu.sh | sh
+wget -qO - https://raw.githubusercontent.com/hoongeun/dotfiles/main/ubuntu.sh | sh
 ```

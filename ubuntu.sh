@@ -1,5 +1,18 @@
 # !/bin/sh
 
+startsudo() {
+    sudo -v
+    ( while true; do sudo -v; sleep 50; done; ) &
+    SUDO_PID="$!"
+    trap stopsudo SIGINT SIGTERM
+}
+stopsudo() {
+    kill "$SUDO_PID"
+    trap - SIGINT SIGTERM
+    sudo -k
+}
+
+startsudo
 sudo apt -qq update
 sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
 cd
@@ -20,7 +33,7 @@ sudo apt install -qqy \
 cd ~/dotfiles/downloads
 git clone --depth 1 https://github.com/jaagr/polybar.git -b 3.5.3
 cd polybar
-./build.sh
+./build.sh 2> /dev/null
 
 echo "===================================="
 echo "[done]: polybar"
@@ -29,14 +42,14 @@ echo "===================================="
 # termite
 cd ~/dotfiles/downloads
 sudo apt install -qqy git g++ libgtk-3-dev gtk-doc-tools gnutls-bin valac intltool libpcre2-dev libglib3.0-cil-dev libgnutls28-dev libgirepository1.0-dev libxml2-utils gperf
-git clone https://github.com/thestinger/vte-ng.git
-echo export --depth 1 LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
+git clone --depth 1 https://github.com/thestinger/vte-ng.git
+echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
 cd vte-ng
-./autogen.sh && make -j && sudo make install
+./autogen.sh 2> /dev/null && make -j 2> /dev/null && sudo make install 2> /dev/null
 cd ~/dotfiles/downloads
 git clone --depth 1 --recursive https://github.com/thestinger/termite.git
 cd termite
-make -j && sudo make install
+make -j 2> /dev/null && sudo make install
 sudo ldconfig
 sudo mkdir -p /lib/terminfo/x
 sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
@@ -47,10 +60,10 @@ echo "[done]: termite"
 echo "===================================="
 # emcas27
 cd ~/dotfiles/downloads
-sudo apt install -qqy texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev
+sudo apt install -qqy texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev libncurses-dev
 git clone --depth 1 https://git.savannah.gnu.org/git/emacs.git -b emacs-27
 cd emacs
-./autogen.sh && ./configure && make -j && sudo make install
+./autogen.sh 2> /dev/null && ./configure 2> /dev/null && make -j 2> /dev/null && sudo make install
 
 echo "===================================="
 echo "[done]: emacs"
@@ -67,7 +80,7 @@ sudo dpkg -i fd.deb 2> /dev/null
 
 # doom
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom install
+~/.emacs.d/bin/doom install 2> /dev/null
 cp -rf ~/dotfiles/home/.doom.d ~/
 ~/.emacs.d/bin/doom sync
 
@@ -126,11 +139,11 @@ echo "===================================="
 sudo apt install -qqy build-essential python-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
 cd ~/dotfiles/downloads/
 curl -sSL -o python.tgz https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
-tar -xvf python.tgz
+tar -xzf python.tgz
 cd Python-3.9.1
-./configure
-make -j
-sudo make install
+./configure 2> /dev/null
+make -j 2> /dev/null
+sudo make install 2> /dev/null
 curl https://bootstrap.pypa.io/get-pip.py | python3
 rm -rf /workspace/local/Python-3.9.1*
 
@@ -140,7 +153,8 @@ echo "===================================="
 
 # rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none
-source $HOME/.cargo/env
+source "$HOME/.cargo/env"
+
 echo "===================================="
 echo "[done]: rust"
 echo "===================================="
@@ -163,7 +177,7 @@ echo "[done]: git"
 echo "===================================="
 
 # docker
-curl -fsSL https://get.docker.com | sh
+curl -fsSL https://get.docker.com | sh 2> /dev/null
 
 echo "===================================="
 echo "[done]: docker"
@@ -230,4 +244,5 @@ echo "===================================="
 
 #done
 rm -rf ~/dotfiles
+sudostop
 sudo reboot

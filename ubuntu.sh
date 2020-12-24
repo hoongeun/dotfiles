@@ -3,9 +3,24 @@
 sudo add-apt-repository ppa:kelleyk/emacs
 wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
 sudo apt-get update
-sudo apt install -y git ripgrep emacs27 openssh curl fish bat tmux i3 flameshot conky build-essential
+sudo apt install -y git ripgrep emacs27 openssh curl fish bat tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo curl
 cd
 git clone https://github.com/hoongeun/dotfiles
+
+# polybar
+sudo apt-get install -y \
+  cmake cmake-data libcairo2-dev libxcb1-dev libxcb-ewmh-dev \
+  libxcb-icccm4-dev libxcb-image0-dev libxcb-randr0-dev \
+  libxcb-util0-dev libxcb-xkb-dev pkg-config python-xcbgen \
+  xcb-proto libxcb-xrm-dev i3-wm libasound2-dev libmpdclient-dev \
+  libiw-dev libcurl4-openssl-dev libpulse-dev \
+  libxcb-composite0-dev xcb libxcb-ewmh2
+cd ~/dotfiles/downloads
+git clone https://github.com/jaagr/polybar.git
+cd polybar
+git tag # see what version do you need
+git checkout 3.5.3
+./build.sh
 
 # termite
 cd ~/dotfiles/downloads

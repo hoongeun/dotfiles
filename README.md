@@ -1,6 +1,6 @@
 # dotfiles
 
-My personal development environment configration script
+My personal development environment configration script \
 (Currently support Ubuntu only)
 
 ## usage

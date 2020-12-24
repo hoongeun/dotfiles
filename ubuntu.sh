@@ -3,7 +3,7 @@
 sudo apt update
 sudo apt install -y git curl fish tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo 
 cd
-git clone https://github.com/hoongeun/dotfiles
+git clone --depth 1 https://github.com/hoongeun/dotfiles
 
 # polybar
 sudo apt-get install -y \
@@ -14,22 +14,20 @@ sudo apt-get install -y \
   libiw-dev libcurl4-openssl-dev libpulse-dev \
   libxcb-composite0-dev xcb libxcb-ewmh2
 cd ~/dotfiles/downloads
-git clone https://github.com/jaagr/polybar.git
+git clone --depth 1 https://github.com/jaagr/polybar.git -b 3.5.3
 cd polybar
-git tag # see what version do you need
-git checkout 3.5.3
 ./build.sh
 
 # termite
 cd ~/dotfiles/downloads
 sudo apt install -y git g++ libgtk-3-dev gtk-doc-tools gnutls-bin valac intltool libpcre2-dev libglib3.0-cil-dev libgnutls28-dev libgirepository1.0-dev libxml2-utils gperf
 git clone https://github.com/thestinger/vte-ng.git
-echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
+echo export --depth 1 LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
 cd vte-ng
 ./autogen.sh
 make -j && sudo make install
 cd ~/dotfiles/downloads
-git clone --recursive https://github.com/thestinger/termite.git
+git clone --depth 1 --recursive https://github.com/thestinger/termite.git
 cd termite
 make -j
 sudo make install
@@ -41,8 +39,8 @@ sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emula
 # emcas27
 cd ~/dotfiles/downloads
 sudo apt install -y texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev
-git clone https://git.savannah.gnu.org/git/emacs.git
-git checkout emacs-27
+git clone --depth 1 https://git.savannah.gnu.org/git/emacs.git -b emacs-27
+cd emacs
 ./autogen.sh
 ./configure
 make -j
@@ -77,6 +75,11 @@ mkdir -p ~/workspace/git
 mkdir -p ~/workspace/local
 
 # nodejs
+## make cache folder (if missing) and take ownership
+sudo mkdir -p /usr/local/n
+sudo chown -R $(whoami) /usr/local/n
+## take ownership of node install destination folders
+sudo chown -R $(whoami) /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
 curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 bash n lts
 npm install -g yarn
@@ -122,7 +125,7 @@ sudo apt install typora
 
 # tmux
 cd
-git clone https://github.com/gpakosz/.tmux.git
+git clone --depth 1 https://github.com/gpakosz/.tmux.git
 ln -s -f .tmux/.tmux.conf
 cp .tmux/.tmux.conf.local .
 

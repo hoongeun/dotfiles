@@ -1,4 +1,4 @@
-# !/bin/sh
+# !/bin/bash
 
 startsudo() {
     sudo -v
@@ -14,7 +14,7 @@ stopsudo() {
 
 startsudo
 sudo apt -qq update
-sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
+sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential autoconf ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
 cd
 git clone --depth 1 https://github.com/hoongeun/dotfiles
 
@@ -60,7 +60,7 @@ echo "[done]: termite"
 echo "===================================="
 # emcas27
 cd ~/dotfiles/downloads
-sudo apt install -qqy texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev libncurses-dev
+sudo apt install -qqy texinfo libxaw7-dev libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev libncurses-dev
 git clone --depth 1 https://git.savannah.gnu.org/git/emacs.git -b emacs-27
 cd emacs
 ./autogen.sh 2> /dev/null && ./configure 2> /dev/null && make -j 2> /dev/null && sudo make install
@@ -123,7 +123,7 @@ echo "===================================="
 
 # go
 curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
-source "$HOME/.gvm/scripts/gvm"
+. "$HOME/.gvm/scripts/gvm"
 gvm install go1.4 -B
 gvm use go1.4
 export GOROOT_BOOTSTRAP=$GOROOT
@@ -136,7 +136,7 @@ echo "[done]: go"
 echo "===================================="
 
 # python
-sudo apt install -qqy build-essential python-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
+sudo apt install -qqy python-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
 cd ~/dotfiles/downloads/
 curl -sSL -o python.tgz https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
 tar -xzf python.tgz
@@ -153,7 +153,7 @@ echo "===================================="
 
 # rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none
-source "$HOME/.cargo/env"
+. "$HOME/.cargo/env"
 
 echo "===================================="
 echo "[done]: rust"

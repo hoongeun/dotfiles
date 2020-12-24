@@ -1,9 +1,13 @@
 # !/bin/sh
 
-sudo apt -qq update
+sudo apt update -qq
 sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
 cd
 git clone --depth 1 https://github.com/hoongeun/dotfiles
+
+echo "===================================="
+echo "[done]: ubuntu stuff"
+echo "===================================="
 
 # polybar
 sudo apt install -qqy \
@@ -17,6 +21,10 @@ cd ~/dotfiles/downloads
 git clone --depth 1 https://github.com/jaagr/polybar.git -b 3.5.3
 cd polybar
 ./build.sh
+
+echo "===================================="
+echo "[done]: polybar"
+echo "===================================="
 
 # termite
 cd ~/dotfiles/downloads
@@ -35,6 +43,9 @@ sudo mkdir -p /lib/terminfo/x
 sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
 sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60
 
+echo "===================================="
+echo "[done]: termite"
+echo "===================================="
 # emcas27
 cd ~/dotfiles/downloads
 sudo apt install -qqy texinfo libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev
@@ -43,6 +54,10 @@ cd emacs
 ./autogen.sh
 ./configure
 make -j && sudo make install
+
+echo "===================================="
+echo "[done]: emacs"
+echo "===================================="
 
 # ripgrep
 cd ~/dotfiles/downloads
@@ -59,15 +74,28 @@ git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 cp -rf ~/dotfiles/home/.doom.d ~/
 ~/.emacs.d/bin/doom sync
 
+echo "===================================="
+echo "[done]: doom"
+echo "===================================="
+
+
 # starship
 curl -fsSL https://starship.rs/install.sh | bash
 echo "eval \"\$(starship init bash)\"" >> ~/.bashrc
 echo "starship init fish | source" >> ~/.config/fish/config.fish
 chsh -s /usr/local/bin/fish
 
+echo "===================================="
+echo "[done]: starship"
+echo "===================================="
+
 # workspace
 mkdir -p ~/workspace/git
 mkdir -p ~/workspace/local
+
+echo "===================================="
+echo "[done]: workspace"
+echo "===================================="
 
 # nodejs
 ## make cache folder (if missing) and take ownership
@@ -79,6 +107,10 @@ curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
 bash n lts
 npm install -g yarn && yarn global add guser
 
+echo "===================================="
+echo "[done]: nodejs"
+echo "===================================="
+
 # go
 curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
 . /home/hoon/.gvm/scripts/gvm
@@ -88,6 +120,10 @@ export GOROOT_BOOTSTRAP=$GOROOT
 gvm install go1.15.5
 gvm use go1.15.5 --default
 echo "gvm use go1.15.5" >> ~/.bashrc
+
+echo "===================================="
+echo "[done]: go"
+echo "===================================="
 
 # python
 sudo apt install -qqy build-essential python-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
@@ -101,20 +137,40 @@ sudo make install
 curl https://bootstrap.pypa.io/get-pip.py | python3
 rm -rf /workspace/local/Python-3.9.1*
 
+echo "===================================="
+echo "[done]: python"
+echo "===================================="
+
 # rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none
+
+echo "===================================="
+echo "[done]: rust"
+echo "===================================="
 
 # bat
 cd ~/dotfiles/downloads
 curl -o bat.deb -sSL https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
 sudo dpkg -i bat.deb
 
+echo "===================================="
+echo "[done]: bat"
+echo "===================================="
+
 # git
 git config --global user.name "Hoongeun Cho"
 git config --global usre.email "me@hoongeun.com"
 
+echo "===================================="
+echo "[done]: git"
+echo "===================================="
+
 # docker
 curl -fsSL https://get.docker.com | sh
+
+echo "===================================="
+echo "[done]: docker"
+echo "===================================="
 
 # typora
 wget -qO - https://typora.io/linux/public-key.asc | sudo apt-key add -
@@ -122,34 +178,58 @@ sudo add-apt-repository 'deb https://typora.io/linux ./'
 sudo apt -qq update
 sudo apt install -qq typora
 
+echo "===================================="
+echo "[done]: typora"
+echo "===================================="
+
 # tmux
 cd
 git clone --depth 1 https://github.com/gpakosz/.tmux.git
 ln -s -f .tmux/.tmux.conf
 cp .tmux/.tmux.conf.local .
 
+echo "===================================="
+echo "[done]: tmux"
+echo "===================================="
+
 # albert
 curl -sSL https://build.opensuse.org/projects/home:manuelschneid3r/public_key | sudo apt-key add -
 echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
 sudo -sSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_20.04/Release.key -O "/etc/apt/trusted.gpg.d/home:manuelschneid3r.asc"
-sudo apt update
+sudo apt update --qq
 sudo apt install -qqy albert
+
+echo "===================================="
+echo "[done]: albert"
+echo "===================================="
 
 # chrome
 cd ~/dotfiles/downloads
 curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb
 sudo dpkg -i chrome.deb
 
+echo "===================================="
+echo "[done]: google chrome"
+echo "===================================="
+
 # vscodium
 cd ~/dotfiles/downloads
 curl -o vscodium.deb -sSL https://github.com/VSCodium/vscodium/releases/download/1.52.1/codium_1.52.1-1608165473_amd64.deb
 sudo dpkg -i vscodium.deb
+
+echo "===================================="
+echo "[done]: vscodium"
+echo "===================================="
 
 # overwrite
 cp -rf ~/dotfiles/home/.* ~/
 sudo cp -rf ~/dotfiles/etc/* /etc/
 sudo cp -rf ~/dotfiles/usr/* /usr/
 sudo fc-cache -f -v
+
+echo "===================================="
+echo "[done]: all done"
+echo "===================================="
 
 #done
 rm -rf ~/dotfiles

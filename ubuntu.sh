@@ -1,5 +1,7 @@
 # !/bin/bash
 
+set -eux
+
 startsudo() {
     sudo -v
     ( while true; do sudo -v; sleep 50; done; ) &
@@ -18,13 +20,22 @@ sudo killall apt apt-get
 sudo rm /var/lib/apt/lists/lock
 sudo rm /var/cache/apt/archives/lock
 sudo rm /var/lib/dpkg/lock*
-sudo dpkg --configure -a 
+sudo dpkg --configure -a
 
 sudo apt update
 
 sudo apt -qq update
 sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential autoconf ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
-cd
+
+# Homebrew installation
+
+if ! command -v brew &>/dev/null; then
+  echo "install homebrew..."
+  curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | bash
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish
+fi
+
 git clone --depth 1 https://github.com/hoongeun/dotfiles
 
 echo "===================================="
@@ -67,25 +78,16 @@ sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emula
 echo "===================================="
 echo "[done]: termite"
 echo "===================================="
-# emcas27
-cd ~/dotfiles/downloads
-sudo apt install -qqy texinfo libxaw7-dev libxpm-dev libjpeg-dev libgif-dev libtiff-dev libgnutls28-dev libncurses-dev
-git clone --depth 1 https://git.savannah.gnu.org/git/emacs.git -b emacs-27
-cd emacs
-./autogen.sh 2> /dev/null && ./configure 2> /dev/null && make -j 2> /dev/null && sudo make install
+
+# emcas28
+brew install emacs
 
 echo "===================================="
 echo "[done]: emacs"
 echo "===================================="
 
-# ripgrep
-cd ~/dotfiles/downloads
-curl -o ripgrep.deb -sL https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb
-sudo dpkg -i ripgrep.deb 2> /dev/null
-
-# fd
-curl -o fd.deb -sL https://github.com/sharkdp/fd/releases/download/v8.2.1/fd_8.2.1_amd64.deb
-sudo dpkg -i fd.deb 2> /dev/null
+# fd, ripgrep
+brew install fg ripgrep
 
 # doom
 git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
@@ -96,6 +98,18 @@ cp -rf ~/dotfiles/home/.doom.d ~/
 echo "===================================="
 echo "[done]: doom"
 echo "===================================="
+
+# neovim
+brew install neovim
+
+echo "===================================="
+echo "[done]: neovim"
+echo "===================================="
+
+# fzf
+brew install fzf
+# To install useful key bindings and fuzzy completion:
+$(brew --prefix)/opt/fzf/install
 
 
 # starship
@@ -192,16 +206,6 @@ echo "===================================="
 echo "[done]: docker"
 echo "===================================="
 
-# typora
-curl -sSL https://typora.io/linux/public-key.asc | sudo apt-key add -
-sudo add-apt-repository 'deb https://typora.io/linux ./'
-sudo apt -qq update
-sudo apt install -qqy typora
-
-echo "===================================="
-echo "[done]: typora"
-echo "===================================="
-
 # tmux
 cd
 git clone --depth 1 https://github.com/gpakosz/.tmux.git
@@ -234,18 +238,19 @@ echo "===================================="
 
 # vscodium
 cd ~/dotfiles/downloads
-curl -o vscodium.deb -sSL https://github.com/VSCodium/vscodium/releases/download/1.52.1/codium_1.52.1-1608165473_amd64.deb
+curl -o vscodium.deb -sSL https://github.com/VSCodium/vscodium/releases/download/1.75.1.23040/codium_1.75.1.23040_amd64.deb
 sudo dpkg -i vscodium.deb 2> /dev/null
 
 echo "===================================="
 echo "[done]: vscodium"
 echo "===================================="
 
-# overwrite
+# configure
 cp -rf ~/dotfiles/home/.* ~/
 sudo cp -rf ~/dotfiles/etc/* /etc/
 sudo cp -rf ~/dotfiles/usr/* /usr/
 sudo fc-cache -f -v
+nvim --headless +PlugInstall +qall
 
 echo "===================================="
 echo "[done]: all done"

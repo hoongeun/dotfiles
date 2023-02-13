@@ -18,6 +18,12 @@ Plug 'junegunn/vim-easy-align'
 " Any valid git URL is allowed
 Plug 'https://github.com/junegunn/vim-github-dashboard.git'
 
+" toggletermnvim
+Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+
+" vimspector
+Plug 'puremourning/vimspector'
+
 " rust
 Plug 'rust-lang/rust.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -78,6 +84,12 @@ let g:airline_theme = 'sonokai'
 
 
 set clipboard=unnamed
+
+" vimspector
+let g:vimspector_enable_mappings = 'HUMAN'
+
+" toggleterm.nvim
+lua require("toggleterm").setup()
 
 " autopairs
 lua << EOF
@@ -140,3 +152,4 @@ lua require("noice").setup({
 lua vim.keymap.set("n", "<leader>rn", function()
 			\ return ":IncRename " .. vim.fn.expand("<cword>")
 			\ end, { expr = true })
+

@@ -158,3 +158,6 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+let g:coc_global_extensions = ['coc-tabnine', 'coc-eslint', 'coc-tsserver', 'coc-prettier', 'coc-stylelint', 'coc-python', 'coc-pyright', 'coc-json']
+

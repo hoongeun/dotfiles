@@ -1,0 +1,17 @@
+theme = "material_darker"
+
+[editor]
+line-number = "relative"
+true-color = true
+lsp.display-messages = true
+insert-final-newline = true
+
+[editor.whitespace]
+render = "all"
+
+[editor.whitespace.characters]
+nbsp = "⍽"
+tab = "→"
+newline = "⏎"
+tabpad = "·"
+

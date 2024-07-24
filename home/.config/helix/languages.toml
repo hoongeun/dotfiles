@@ -1,0 +1,52 @@
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer" ]
+formatter = { command = "rustfmt" }
+auto-format = true
+indent = { tab-width = 4, unit = "t" }
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[[language]]
+name = "c"
+language-servers =  ["clangd-12"]
+auto-format = true
+formatter = { command = "clang-format-12", args = ["-style=file"] }
+indent = { tab-width = 4, unit = "t" }
+
+[[language]]
+name = "cpp"
+language-servers =  ["clangd-12"]
+auto-format = true
+indent = { tab-width = 4, unit = "t" }
+formatter = { command = "clang-format-12", args = ["-style=file"] }
+comment-token = "//"
+[language-server.clangd-12]
+command = "clangd-12"
+args=["--compile-commands-dir=*/build/"] 
+
+[[language]]
+name = "bash"
+language-servers = ["bash-language-server"]
+formatter = { command = "shfmt" , args = ["-l","-w"]}
+auto-format = true
+[language-server.bash-language-server]
+command = "bash-language-server"
+
+[[language]]
+name = "python"
+language-servers = ["pylsp"]
+formatter = { command = "black", args = ["--quiet", "-"] }
+auto-format = true
+[language-server.pylsp.plugins]
+pyflakes = {enabled = false}
+mccabe = {enabled = false}
+pyls_isort = {enabled = false}
+pycodestyle = {enabled = false, maxLineLength = 88}
+pydocstyle = {enabled = false}
+autopep8 = {enabled = false}
+yapf = {enabled = false}
+flake8 = {enabled = false}
+pylint = {enabled = false}
+ruff = {enabled = true, extendSelect = ["I"]}
+mypy = {enabled = true, live_mode = true, strict = true}

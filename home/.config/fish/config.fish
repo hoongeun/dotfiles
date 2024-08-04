@@ -1,22 +1,28 @@
-set -gx TERM xterm-256color
-
-fish_add_path -gP "$HOMEBREW_PREFIX/bin" "$HOMEBREW_PREFIX/sbin"
-! set -q MANPATH; and set MANPATH ''
-set -gx MANPATH "$HOMEBREW_PREFIX/share/man" $MANPATH
-! set -q INFOPATH; and set INFOPATH ''
-set -gx INFOPATH "$HOMEBREW_PREFIX/share/info" $INFOPATH
-
 starship init fish | source
 
-# Created by `pipx` on 2024-06-26 07:15:23
-set -gx PATH $PATH /Users/hoongeun/.local/bin
+alias k=kubectl
+alias tf=terraform
+alias bat=batcat
+alias vim=nvim
+alias tf=terraform
+alias lg=lazygit
+alias zj=zellij
+alias e=emacsclient
+set -gx TERM xterm-256color
+set -gx VCPKG_ROOT "$HOME/vcpkg"
 
-alias tf="terraform"
-alias k="kubectl"
-alias zj="zellij"
+set -gx PATH /home/hoon/.local/bin $PATH
+set -gx PATH /home/hoon/.local/share/coursier/bin $PATH
+ibus-daemon -drx
+setxkbmap -layout us -option ctrl:nocaps
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+eval /home/hoon/miniconda3/bin/conda "shell.fish" hook $argv | source
+# <<< conda initialize <<<
 
 function yy
-    set tmp (mktemp -t "yazi-cwd.XXXXXX")
+    set tmp (mktemp -t "yazi-cwd.XXXXX")
     yazi $argv --cwd-file="$tmp"
     if set cwd (cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
         cd -- "$cwd"

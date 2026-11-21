@@ -10,7 +10,7 @@ Personal development environment for Ubuntu 26.04.
 - Editors: helix, neovim, zed
 - Tools: yazi, lazygit, leaf-markdown-viewer, k9s, kubectl, Terraform, bat, fzf, ripgrep
 - Browser: brave
-- Fonts: Yeomil Mono Nerd Font, D2Coding Nerd Font and Noto Sans CJK
+- Fonts: IosevkaTerm Nerd Font Mono (Ghostty), Yeomil Mono Nerd Font (Waybar), and Noto Sans CJK
 - Package managers: brew, asdf
 - Languages: Node.js via Homebrew; other versions managed separately with asdf
 

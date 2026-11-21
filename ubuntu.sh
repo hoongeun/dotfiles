@@ -12,7 +12,8 @@ BREW_BIN=/home/linuxbrew/.linuxbrew/bin/brew
 TEMP_DIR="$(mktemp -d)"
 cleanup() {
     rm -f "$TEMP_DIR/homebrew.sh" "$TEMP_DIR/vicinae.sh" "$TEMP_DIR/brave.sh" "$TEMP_DIR/plug.vim" "$TEMP_DIR/hyprpm.toml" \
-        "$TEMP_DIR/yeomil.zip" "$TEMP_DIR/yeomil-Regular.ttf" "$TEMP_DIR/yeomil-Bold.ttf" "$TEMP_DIR/yeomil-Light.ttf"
+        "$TEMP_DIR/yeomil.zip" "$TEMP_DIR/yeomil-Regular.ttf" "$TEMP_DIR/yeomil-Bold.ttf" "$TEMP_DIR/yeomil-Light.ttf" \
+        "$TEMP_DIR/iosevka-term.tar.xz" "$TEMP_DIR/IosevkaTermNerdFontMono-Regular.ttf"
     rmdir "$TEMP_DIR"
 }
 trap cleanup EXIT
@@ -83,15 +84,15 @@ if [ ! -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
     install -Dm644 "$TEMP_DIR/plug.vim" "$HOME/.local/share/nvim/site/autoload/plug.vim"
 fi
 nvim --headless '+PlugInstall --sync' '+qa'
-sudo mkdir -p /usr/local/share/fonts
-sudo cp -r "$DOTFILES/usr/local/share/fonts/." /usr/local/share/fonts/
+curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/IosevkaTerm.tar.xz -o "$TEMP_DIR/iosevka-term.tar.xz"
+tar -xOf "$TEMP_DIR/iosevka-term.tar.xz" IosevkaTermNerdFontMono-Regular.ttf > "$TEMP_DIR/IosevkaTermNerdFontMono-Regular.ttf"
+install -Dm644 "$TEMP_DIR/IosevkaTermNerdFontMono-Regular.ttf" "$HOME/.local/share/fonts/IosevkaTermNerdFontMono-Regular.ttf"
 curl -fsSL https://github.com/taevel02/yeomil-mono/releases/download/v1.1.2/YeomilMono-NerdFont-TTF.zip -o "$TEMP_DIR/yeomil.zip"
 mkdir -p "$HOME/.local/share/fonts"
 for weight in Regular Bold Light; do
     unzip -p "$TEMP_DIR/yeomil.zip" "YeomilMonoNerdFont-$weight.ttf" > "$TEMP_DIR/yeomil-$weight.ttf"
     install -m 644 "$TEMP_DIR/yeomil-$weight.ttf" "$HOME/.local/share/fonts/YeomilMonoNerdFont-$weight.ttf"
 done
-sudo fc-cache -f
 fc-cache -f
 
 echo "Installation complete. Matching ~/.config files were overwritten."

@@ -143,3 +143,21 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,emacs,windows,linux,macos
 
+# Local runtime data and credentials
+home/.config/**/history*
+home/.config/fish/fish_variables
+home/.config/**/.env
+home/.config/**/.env.*
+home/.config/**/credentials*
+home/.config/**/tokens*
+home/.config/**/*.db
+home/.config/**/*.db-*
+home/.config/**/*.sqlite*
+home/.ssh/
+home/.aws/
+
+# Local VM state and disk images
+.vagrant/
+*.qcow2
+*.box
+

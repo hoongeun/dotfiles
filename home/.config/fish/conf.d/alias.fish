@@ -1,1 +1,1 @@
-alias e 'emacs -nw'
+alias e 'hx'

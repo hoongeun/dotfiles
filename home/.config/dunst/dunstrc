@@ -1,0 +1,59 @@
+[global]
+    monitor = 0
+    follow = mouse
+    origin = top-right
+    offset = (16, 40)
+    width = (200, 340)
+    height = (0, 120)
+    notification_limit = 3
+    gap_size = 6
+
+    padding = 8
+    horizontal_padding = 12
+    frame_width = 0
+    corner_radius = 6
+    separator_height = 0
+
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_corner_radius = 2
+
+    font = Noto Sans CJK KR 9
+    markup = full
+    format = "<b>%s</b> %b"
+    alignment = left
+    ellipsize = end
+    word_wrap = no
+    ignore_newline = yes
+    show_age_threshold = -1
+
+    icon_position = off
+
+    sticky_history = yes
+    history_length = 30
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click = close_current
+
+[urgency_low]
+    background = "#1e1e2ee6"
+    foreground = "#7f849c"
+    timeout = 2
+
+[urgency_normal]
+    background = "#1e1e2ee6"
+    foreground = "#cdd6f4"
+    timeout = 4
+
+[urgency_critical]
+    background = "#1e1e2ee6"
+    foreground = "#f38ba8"
+    timeout = 0
+
+# Suppress the IBus Wayland input-method panel warning.
+[ibus_wayland_warning]
+    appname = ibus
+    body = "*should be called from the desktop session*"
+    skip_display = true
+    history_ignore = true
+

@@ -1,262 +1,102 @@
-# !/bin/bash
+#!/bin/sh
+{
+set -eu
 
-set -eux
-
-startsudo() {
-    sudo -v
-    ( while true; do sudo -v; sleep 50; done; ) &
-    SUDO_PID="$!"
-    trap stopsudo SIGINT SIGTERM
-}
-stopsudo() {
-    kill "$SUDO_PID"
-    trap - SIGINT SIGTERM
-    sudo -k
-}
-
-startsudo
-# FIXME
-sudo killall apt apt-get
-sudo rm /var/lib/apt/lists/lock
-sudo rm /var/cache/apt/archives/lock
-sudo rm /var/lib/dpkg/lock*
-sudo dpkg --configure -a
-
-sudo apt update
-
-sudo apt -qq update
-sudo apt install -qqy git curl fish tmux i3 flameshot conky build-essential autoconf ranger caca-utils highlight atool w3m poppler-utils mediainfo bison
-
-# Homebrew installation
-
-if ! command -v brew &>/dev/null; then
-  echo "install homebrew..."
-  curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | bash
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  echo 'eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >> ~/.config/fish/config.fish
+if ! grep -qx 'ID=ubuntu' /etc/os-release || ! grep -qx 'VERSION_ID="26.04"' /etc/os-release; then
+    echo "Ubuntu 26.04 is required." >&2
+    exit 1
 fi
 
-git clone --depth 1 https://github.com/hoongeun/dotfiles
+DOTFILES="$HOME/workspace/git/dotfiles"
+BREW_BIN=/home/linuxbrew/.linuxbrew/bin/brew
+TEMP_DIR="$(mktemp -d)"
+cleanup() {
+    rm -f "$TEMP_DIR/homebrew.sh" "$TEMP_DIR/vicinae.sh" "$TEMP_DIR/brave.sh" "$TEMP_DIR/plug.vim" "$TEMP_DIR/hyprpm.toml" \
+        "$TEMP_DIR/yeomil.zip" "$TEMP_DIR/yeomil-Regular.ttf" "$TEMP_DIR/yeomil-Bold.ttf" "$TEMP_DIR/yeomil-Light.ttf"
+    rmdir "$TEMP_DIR"
+}
+trap cleanup EXIT
 
-echo "===================================="
-echo "[done]: ubuntu stuff"
-echo "===================================="
+sudo apt-get update
+sudo apt-get install -y git curl jq fish build-essential procps file unzip pciutils ubuntu-drivers-common
 
-# polybar
-sudo apt install -qqy \
-  cmake cmake-data libcairo2-dev libxcb1-dev libxcb-ewmh-dev \
-  libxcb-icccm4-dev libxcb-image0-dev libxcb-randr0-dev \
-  libxcb-util0-dev libxcb-xkb-dev pkg-config python-xcbgen \
-  xcb-proto libxcb-xrm-dev i3-wm libasound2-dev libmpdclient-dev \
-  libiw-dev libcurl4-openssl-dev libpulse-dev \
-  libxcb-composite0-dev xcb libxcb-ewmh2
-cd ~/dotfiles/downloads
-git clone --depth 1 https://github.com/jaagr/polybar.git -b 3.5.3
-cd polybar
-./build.sh 2> /dev/null
+# Installs any recommended hardware drivers (GPU, Wi-Fi, ...); no-op when none are missing.
+sudo ubuntu-drivers install
+HAS_NVIDIA=false
+if lspci | grep -iE '(VGA|3D|Display).*NVIDIA' >/dev/null; then
+    HAS_NVIDIA=true
+fi
+mkdir -p "$HOME/workspace/git" "$HOME/workspace/local"
+if [ ! -d "$DOTFILES/.git" ]; then
+    git clone https://github.com/hoongeun/dotfiles.git "$DOTFILES"
+fi
 
-echo "===================================="
-echo "[done]: polybar"
-echo "===================================="
+if [ ! -x "$BREW_BIN" ]; then
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$TEMP_DIR/homebrew.sh"
+    env -i HOME="$HOME" USER="$USER" PATH="$PATH" NONINTERACTIVE=1 bash "$TEMP_DIR/homebrew.sh"
+fi
+eval "$("$BREW_BIN" shellenv)"
+export PATH="$HOME/.local/bin:$HOME/.asdf/shims:$PATH"
 
-# termite
-cd ~/dotfiles/downloads
-sudo apt install -qqy git g++ libgtk-3-dev gtk-doc-tools gnutls-bin valac intltool libpcre2-dev libglib3.0-cil-dev libgnutls28-dev libgirepository1.0-dev libxml2-utils gperf
-git clone --depth 1 https://github.com/thestinger/vte-ng.git
-echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
-cd vte-ng
-./autogen.sh 2> /dev/null && make -j 2> /dev/null && sudo make install 2> /dev/null
-cd ~/dotfiles/downloads
-git clone --depth 1 --recursive https://github.com/thestinger/termite.git
-cd termite
-make -j 2> /dev/null && sudo make install
-sudo ldconfig
-sudo mkdir -p /lib/terminfo/x
-sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
-sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60
+brew install nushell starship bat fzf ripgrep fd gh git-delta git-lfs gdu tree node \
+    neovim helix zellij yazi lazygit lazydocker leaf-markdown-viewer asdf k9s kubernetes-cli \
+    hashicorp/tap/terraform
+if ! command -v zed >/dev/null 2>&1; then
+    brew install --cask zed
+fi
 
-echo "===================================="
-echo "[done]: termite"
-echo "===================================="
+sudo apt-get install -y hyprland hyprland-dev hypridle hyprlock waybar dunst swaybg \
+    ghostty network-manager-gnome policykit-1-gnome ibus ibus-hangul wl-clipboard xclip \
+    grim slurp brightnessctl nautilus zenity fonts-noto-cjk libpango1.0-dev libgles-dev \
+    clangd clang-format cmake cpio pkg-config ninja-build
 
-# emcas28
-brew install emacs
+# Ubuntu's hyprpm uses packaged headers but does not initialize their ABI state.
+HYPRPM_STATE="/var/cache/hyprpm/$(id -un)/state.toml"
+if [ -f /usr/share/pkgconfig/hyprland.pc ] && [ ! -f "$HYPRPM_STATE" ]; then
+    HYPRLAND_ABI="$(Hyprland --version-json | jq -er '.abiHash | select(type == "string" and length > 0)')"
+    case "$HYPRLAND_ABI" in *[!A-Za-z0-9_.-]*) exit 1 ;; esac
+    printf '[state]\nhash = "%s"\ndont_warn_install = false\n' "$HYPRLAND_ABI" > "$TEMP_DIR/hyprpm.toml"
+    sudo install -d -m 755 "$(dirname "$HYPRPM_STATE")"
+    sudo install -m 644 "$TEMP_DIR/hyprpm.toml" "$HYPRPM_STATE"
+fi
 
-echo "===================================="
-echo "[done]: emacs"
-echo "===================================="
+mkdir -p "$HOME/.local/bin"
+curl -fsSL https://vicinae.com/install.sh -o "$TEMP_DIR/vicinae.sh"
+env -i HOME="$HOME" USER="$USER" PATH="$PATH" TERM=xterm PREFIX="$HOME/.local" bash "$TEMP_DIR/vicinae.sh" --prefix "$HOME/.local"
+curl -fsSL https://dl.brave.com/install.sh -o "$TEMP_DIR/brave.sh"
+env -i HOME="$HOME" USER="$USER" PATH="$PATH" sh "$TEMP_DIR/brave.sh"
 
-# fd, ripgrep
-brew install fg ripgrep
+mkdir -p "$HOME/workspace/git" "$HOME/workspace/local" "$HOME/.config"
+cp -r "$DOTFILES/home/.config/." "$HOME/.config/"
+if [ "$HAS_NVIDIA" = true ]; then
+    cat > "$HOME/.config/hypr/gpu.conf" <<'EOF'
+env = LIBVA_DRIVER_NAME,nvidia
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = NVD_BACKEND,direct
+cursor {
+    no_hardware_cursors = true
+}
+EOF
+fi
+if [ ! -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
+    curl -fsSL https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -o "$TEMP_DIR/plug.vim"
+    install -Dm644 "$TEMP_DIR/plug.vim" "$HOME/.local/share/nvim/site/autoload/plug.vim"
+fi
+nvim --headless '+PlugInstall --sync' '+qa'
+sudo mkdir -p /usr/local/share/fonts
+sudo cp -r "$DOTFILES/usr/local/share/fonts/." /usr/local/share/fonts/
+curl -fsSL https://github.com/taevel02/yeomil-mono/releases/download/v1.1.2/YeomilMono-NerdFont-TTF.zip -o "$TEMP_DIR/yeomil.zip"
+mkdir -p "$HOME/.local/share/fonts"
+for weight in Regular Bold Light; do
+    unzip -p "$TEMP_DIR/yeomil.zip" "YeomilMonoNerdFont-$weight.ttf" > "$TEMP_DIR/yeomil-$weight.ttf"
+    install -m 644 "$TEMP_DIR/yeomil-$weight.ttf" "$HOME/.local/share/fonts/YeomilMonoNerdFont-$weight.ttf"
+done
+sudo fc-cache -f
+fc-cache -f
 
-# doom
-git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
-~/.emacs.d/bin/doom install 2> /dev/null
-cp -rf ~/dotfiles/home/.doom.d ~/
-~/.emacs.d/bin/doom sync
-
-echo "===================================="
-echo "[done]: doom"
-echo "===================================="
-
-# neovim
-brew install neovim
-
-echo "===================================="
-echo "[done]: neovim"
-echo "===================================="
-
-# fzf
-brew install fzf
-# To install useful key bindings and fuzzy completion:
-$(brew --prefix)/opt/fzf/install
-
-
-# starship
-curl -fsSL https://starship.rs/install.sh | bash
-echo "eval \"\$(starship init bash)\"" >> ~/.bashrc
-echo "starship init fish | source" >> ~/.config/fish/config.fish
-chsh -s /usr/local/bin/fish
-
-echo "===================================="
-echo "[done]: starship"
-echo "===================================="
-
-# workspace
-mkdir -p ~/workspace/git
-mkdir -p ~/workspace/local
-
-echo "===================================="
-echo "[done]: workspace"
-echo "===================================="
-
-# nodejs
-## make cache folder (if missing) and take ownership
-sudo mkdir -p /usr/local/n
-sudo chown -R $(whoami) /usr/local/n
-## take ownership of node install destination folders
-sudo chown -R $(whoami) /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
-curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n
-bash n lts
-npm install -g yarn && yarn global add guser
-
-echo "===================================="
-echo "[done]: nodejs"
-echo "===================================="
-
-# go
-curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
-. "$HOME/.gvm/scripts/gvm"
-gvm install go1.4 -B
-gvm use go1.4
-export GOROOT_BOOTSTRAP=$GOROOT
-gvm install go1.15.5
-gvm use go1.15.5 --default
-echo "gvm use go1.15.5" >> ~/.bashrc
-
-echo "===================================="
-echo "[done]: go"
-echo "===================================="
-
-# python
-sudo apt install -qqy python-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
-cd ~/dotfiles/downloads/
-curl -sSL -o python.tgz https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
-tar -xzf python.tgz
-cd Python-3.9.1
-./configure 2> /dev/null
-make -j 2> /dev/null
-sudo make install 2> /dev/null
-curl https://bootstrap.pypa.io/get-pip.py | python3
-rm -rf /workspace/local/Python-3.9.1*
-
-echo "===================================="
-echo "[done]: python"
-echo "===================================="
-
-# rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none
-. "$HOME/.cargo/env"
-
-echo "===================================="
-echo "[done]: rust"
-echo "===================================="
-
-# bat
-cd ~/dotfiles/downloads
-curl -o bat.deb -sSL https://github.com/sharkdp/bat/releases/download/v0.17.1/bat_0.17.1_amd64.deb
-sudo dpkg -i bat.deb 2> /dev/nul
-
-echo "===================================="
-echo "[done]: bat"
-echo "===================================="
-
-# git
-git config --global user.name "Hoongeun Cho"
-git config --global usre.email "me@hoongeun.com"
-
-echo "===================================="
-echo "[done]: git"
-echo "===================================="
-
-# docker
-curl -fsSL https://get.docker.com | sh 2> /dev/null
-
-echo "===================================="
-echo "[done]: docker"
-echo "===================================="
-
-# tmux
-cd
-git clone --depth 1 https://github.com/gpakosz/.tmux.git
-ln -s -f .tmux/.tmux.conf
-cp .tmux/.tmux.conf.local .
-
-echo "===================================="
-echo "[done]: tmux"
-echo "===================================="
-
-# albert
-curl -sSL https://build.opensuse.org/projects/home:manuelschneid3r/public_key | sudo apt-key add -
-echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_20.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
-sudo -sSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_20.04/Release.key -O "/etc/apt/trusted.gpg.d/home:manuelschneid3r.asc"
-sudo apt -qq update
-sudo apt install -qqy albert
-
-echo "===================================="
-echo "[done]: albert"
-echo "===================================="
-
-# chrome
-cd ~/dotfiles/downloads
-curl -sSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o chrome.deb
-sudo dpkg -i chrome.deb 2> /dev/null
-
-echo "===================================="
-echo "[done]: google chrome"
-echo "===================================="
-
-# vscodium
-cd ~/dotfiles/downloads
-curl -o vscodium.deb -sSL https://github.com/VSCodium/vscodium/releases/download/1.75.1.23040/codium_1.75.1.23040_amd64.deb
-sudo dpkg -i vscodium.deb 2> /dev/null
-
-echo "===================================="
-echo "[done]: vscodium"
-echo "===================================="
-
-# configure
-cp -rf ~/dotfiles/home/.* ~/
-sudo cp -rf ~/dotfiles/etc/* /etc/
-sudo cp -rf ~/dotfiles/usr/* /usr/
-sudo fc-cache -f -v
-nvim --headless +PlugInstall +qall
-
-echo "===================================="
-echo "[done]: all done"
-echo "===================================="
-
-#done
-rm -rf ~/dotfiles
-sudostop
-sudo reboot
+echo "Installation complete. Matching ~/.config files were overwritten."
+echo "Hyprland will install hy3 on its first login."
+if [ -f /var/run/reboot-required ]; then
+    echo "Reboot required (e.g. new drivers) before starting Hyprland."
+fi
+}

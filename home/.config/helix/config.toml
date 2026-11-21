@@ -1,5 +1,4 @@
 theme = "material_darker"
-
 [editor]
 line-number = "relative"
 true-color = true

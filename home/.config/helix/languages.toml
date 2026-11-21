@@ -9,20 +9,20 @@ command = "rust-analyzer"
 
 [[language]]
 name = "c"
-language-servers =  ["clangd-12"]
+language-servers =  ["clangd"]
 auto-format = true
-formatter = { command = "clang-format-12", args = ["-style=file"] }
+formatter = { command = "clang-format", args = ["-style=file"] }
 indent = { tab-width = 4, unit = "t" }
 
 [[language]]
 name = "cpp"
-language-servers =  ["clangd-12"]
+language-servers =  ["clangd"]
 auto-format = true
 indent = { tab-width = 4, unit = "t" }
-formatter = { command = "clang-format-12", args = ["-style=file"] }
+formatter = { command = "clang-format", args = ["-style=file"] }
 comment-token = "//"
-[language-server.clangd-12]
-command = "clangd-12"
+[language-server.clangd]
+command = "clangd"
 args=["--compile-commands-dir=*/build/"] 
 
 [[language]]
@@ -50,15 +50,3 @@ flake8 = {enabled = false}
 pylint = {enabled = false}
 ruff = {enabled = true, extendSelect = ["I"]}
 mypy = {enabled = true, live_mode = true, strict = true}
-
-[[language]]
-name = "go"
-roots = ["go.work", "go.mod"]
-auto-format = true
-comment-token = "//"
-language-servers = [ "gopls"]
-
-[language-server.gopls]
-command = "gopls"
-config = { "gofumpt" = true, "local" = "goimports", "semanticTokens" = true, "staticcheck" = true, "verboseOutput" = true, "analyses" = { "fieldalignment" = true, "nilness" = true, unusedparams = true, unusedwrite = true, useany = true }, usePlaceholders = true, completeUnimported = true, hints = { "assignVariableType" = true, "compositeLiteralFields" = true, "compositeLiteralTypes" = true, "constantValues" = true, "functionTypeParameters" = true, "parameterNames" = true, "rangeVariableTypes" = true } }
-

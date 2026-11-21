@@ -1,0 +1,73 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 24,
+    "spacing": 2,
+
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": [],
+    "modules-right": [
+        "custom/codex",
+        "cpu", "memory", "disk",
+        "pulseaudio", "network", "battery",
+        "clock", "tray"
+    ],
+
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{name}"
+    },
+
+    "custom/codex": {
+        "exec": "python3 -I $HOME/.config/waybar/scripts/codex-usage.py",
+        "return-type": "json",
+        "interval": 120
+    },
+
+    "cpu": {
+        "interval": 3,
+        "format": "<span foreground='#7ee081'>󰍛</span> {usage}%"
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "<span foreground='#c77dff'>󰘚</span> {percentage}%",
+        "tooltip-format": "{used:0.1f}G / {total:0.1f}G"
+    },
+
+    "disk": {
+        "interval": 60,
+        "path": "/",
+        "format": "<span foreground='#ffd166'>󰋊</span> {percentage_used}%",
+        "tooltip-format": "{used} / {total}"
+    },
+
+    "pulseaudio": {
+        "format": "<span foreground='#5ea9ff'>󰕾</span> {volume}%",
+        "format-muted": "<span foreground='#5ea9ff'>󰖁</span> muted",
+        "on-click": "pavucontrol",
+        "scroll-step": 5
+    },
+
+    "network": {
+        "format-wifi": "<span foreground='#2ee6c8'>󰖩</span> {essid}",
+        "format-ethernet": "<span foreground='#2ee6c8'>󰈀</span> eth",
+        "format-disconnected": "<span foreground='#2ee6c8'>󰖪</span> offline",
+        "tooltip-format": "{ifname}: {ipaddr}"
+    },
+
+    "battery": {
+        "states": { "warning": 30, "critical": 15 },
+        "format": "<span foreground='#7ee081'>󰁹</span> {capacity}%",
+        "format-charging": "<span foreground='#7ee081'>󰂄</span> {capacity}%"
+    },
+
+    "clock": {
+        "format": "<span foreground='#ffffff'>󰥔</span> {:%m/%d %a %H:%M}"
+    },
+
+    "tray": {
+        "spacing": 8
+    }
+}

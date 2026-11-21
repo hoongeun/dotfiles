@@ -1,0 +1,6 @@
+command = /home/linuxbrew/.linuxbrew/bin/nu
+theme = Material Darker
+font-size = 11
+font-family = "YeomilMono Nerd Font"
+font-family = "D2Codingligature Nerd Font"
+freetype-load-flags = hinting,autohint

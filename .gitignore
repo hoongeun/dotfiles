@@ -145,7 +145,6 @@ $RECYCLE.BIN/
 
 # Local runtime data and credentials
 home/.config/**/history*
-home/.config/fish/fish_variables
 home/.config/**/.env
 home/.config/**/.env.*
 home/.config/**/credentials*

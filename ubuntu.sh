@@ -18,7 +18,7 @@ cleanup() {
 trap cleanup EXIT
 
 sudo apt-get update
-sudo apt-get install -y git curl jq fish build-essential procps file unzip pciutils ubuntu-drivers-common
+sudo apt-get install -y git curl jq build-essential procps file unzip pciutils ubuntu-drivers-common
 
 # Installs any recommended hardware drivers (GPU, Wi-Fi, ...); no-op when none are missing.
 sudo ubuntu-drivers install

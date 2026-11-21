@@ -6,7 +6,7 @@ Personal development environment for Ubuntu 26.04.
 
 - Desktop: hyprland (hypridle, hyprlock), waybar, dunst
 - Launcher: vicinae
-- Terminal / shell: ghostty, fish, nushell, starship, zellij
+- Terminal / shell: ghostty, nushell, starship, zellij
 - Editors: helix, neovim, zed
 - Tools: yazi, lazygit, leaf-markdown-viewer, k9s, kubectl, Terraform, bat, fzf, ripgrep
 - Browser: brave

@@ -41,8 +41,8 @@ Zed is installed with Homebrew when it is not already available. On Ubuntu,
 the official Vicinae installer downloads and extracts its AppImage.
 
 On the first Hyprland login, hyprpm builds and enables the matching hy3 plugin.
-IBus Hangul uses Shift+Space to switch input. Set `~/.wallpaper.png` to enable
-the wallpaper.
+IBus Hangul uses Shift+Space to switch input. Replace
+`~/.config/hypr/wallpaper.jpg` to change the wallpaper.
 
 Ghostty starts Nushell with the migrated aliases; `tf` runs Terraform and `yy`
 returns to the directory selected in Yazi.

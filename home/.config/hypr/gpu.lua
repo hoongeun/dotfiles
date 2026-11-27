@@ -1,0 +1,1 @@
+-- GPU-specific settings are written by ubuntu.sh when NVIDIA is detected.

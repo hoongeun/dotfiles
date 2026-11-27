@@ -2,28 +2,29 @@
     monitor = 0
     follow = mouse
     origin = top-right
-    offset = (16, 40)
-    width = (200, 340)
-    height = (0, 120)
+    offset = 16x40
+    width = (360, 440)
+    height = 200
     notification_limit = 3
-    gap_size = 6
+    gap_size = 8
 
-    padding = 8
-    horizontal_padding = 12
-    frame_width = 0
-    corner_radius = 6
+    padding = 16
+    horizontal_padding = 16
+    frame_width = 2
+    frame_color = "#ffffff1a"
+    corner_radius = 12
     separator_height = 0
 
     progress_bar_height = 4
     progress_bar_frame_width = 0
     progress_bar_corner_radius = 2
 
-    font = Noto Sans CJK KR 9
+    font = Inter Nerd Font 13
     markup = full
-    format = "<b>%s</b> %b"
+    format = "<b>%s</b>\n<span foreground='#888888'>%b</span>"
     alignment = left
     ellipsize = end
-    word_wrap = no
+    word_wrap = yes
     ignore_newline = yes
     show_age_threshold = -1
 
@@ -36,24 +37,24 @@
     mouse_right_click = close_current
 
 [urgency_low]
-    background = "#1e1e2ee6"
-    foreground = "#7f849c"
-    timeout = 2
-
-[urgency_normal]
-    background = "#1e1e2ee6"
-    foreground = "#cdd6f4"
+    background = "#111111"
+    foreground = "#888888"
     timeout = 4
 
+[urgency_normal]
+    background = "#111111"
+    foreground = "#ffffff"
+    timeout = 6
+
 [urgency_critical]
-    background = "#1e1e2ee6"
-    foreground = "#f38ba8"
+    background = "#111111"
+    foreground = "#ffffff"
+    frame_color = "#ff453a99"
     timeout = 0
 
-# Suppress the IBus Wayland input-method panel warning.
-[ibus_wayland_warning]
-    appname = ibus
-    body = "*should be called from the desktop session*"
+# fcitx5 warns about GTK_IM_MODULE; it is kept because the Wayland text-input path misorders Hangul commits.
+[fcitx5_wayland_diagnose]
+    appname = Fcitx
+    summary = "Wayland Diagnose"
     skip_display = true
     history_ignore = true
-

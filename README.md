@@ -41,7 +41,7 @@ Zed is installed with Homebrew when it is not already available. On Ubuntu,
 the official Vicinae installer downloads and extracts its AppImage.
 
 On the first Hyprland login, hyprpm builds and enables the matching hy3 plugin.
-Caps Lock acts as an additional Ctrl key, and IBus Hangul uses Shift+Space to
+Caps Lock acts as an additional Ctrl key, and fcitx5 Hangul uses Shift+Space to
 switch input. Super+Shift+P arranges the current workspace's windows as
 non-overlapping floating windows; press it again to restore them. Replace
 `~/.config/hypr/wallpaper.jpg` to change the wallpaper.

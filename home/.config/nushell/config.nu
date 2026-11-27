@@ -30,13 +30,6 @@ $env.PATH = ($env.PATH | prepend ["/home/linuxbrew/.linuxbrew/bin" "/home/linuxb
 $env.MANPATH = $"/home/linuxbrew/.linuxbrew/share/man:($env.MANPATH? | default '')"
 $env.INFOPATH = $"/home/linuxbrew/.linuxbrew/share/info:($env.INFOPATH? | default '')"
 
-# IBus input method
-$env.GTK_IM_MODULE = "ibus"
-$env.QT_IM_MODULE = "ibus"
-$env.XMODIFIERS = "@im=ibus"
-if (pgrep -x ibus-daemon | complete | get exit_code) != 0 {
-    ^ibus-daemon -dr
-}
 $env.config.table.mode = "none"
 $env.config.table.index_mode = "never"
 $env.PATH = ($env.PATH | prepend $"($env.HOME)/.cargo/bin" | uniq)

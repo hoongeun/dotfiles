@@ -160,3 +160,8 @@ home/.aws/
 *.qcow2
 *.box
 
+
+# vdirsyncer credentials
+home/.config/vdirsyncer/client_id
+home/.config/vdirsyncer/client_secret
+home/.config/vdirsyncer/google_token

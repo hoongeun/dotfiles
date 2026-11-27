@@ -41,13 +41,13 @@ export PATH="$HOME/.local/bin:$HOME/.asdf/shims:$PATH"
 
 brew install nushell starship bat fzf ripgrep fd gh git-delta git-lfs gdu tree node \
     neovim helix zellij yazi lazygit lazydocker leaf-markdown-viewer asdf k9s kubernetes-cli \
-    hashicorp/tap/terraform
+    hashicorp/tap/terraform khal vdirsyncer
 if ! command -v zed >/dev/null 2>&1; then
     brew install --cask zed
 fi
 
-sudo apt-get install -y hyprland hyprland-dev hypridle hyprlock waybar dunst swaybg \
-    ghostty network-manager-gnome policykit-1-gnome ibus ibus-hangul wl-clipboard xclip \
+sudo apt-get install -y hyprland hyprland-dev hyprland-guiutils hypridle hyprlock waybar dunst swaybg \
+    ghostty pavucontrol network-manager-gnome policykit-1-gnome fcitx5 fcitx5-hangul wl-clipboard xclip \
     grim slurp brightnessctl nautilus zenity fonts-noto-cjk libpango1.0-dev libgles-dev \
     clangd clang-format cmake cpio pkg-config ninja-build
 
@@ -70,13 +70,11 @@ env -i HOME="$HOME" USER="$USER" PATH="$PATH" sh "$TEMP_DIR/brave.sh"
 mkdir -p "$HOME/workspace/git" "$HOME/workspace/local" "$HOME/.config"
 cp -r "$DOTFILES/home/.config/." "$HOME/.config/"
 if [ "$HAS_NVIDIA" = true ]; then
-    cat > "$HOME/.config/hypr/gpu.conf" <<'EOF'
-env = LIBVA_DRIVER_NAME,nvidia
-env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = NVD_BACKEND,direct
-cursor {
-    no_hardware_cursors = true
-}
+    cat > "$HOME/.config/hypr/gpu.lua" <<'EOF'
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
+hl.config({ cursor = { no_hardware_cursors = true } })
 EOF
 fi
 if [ ! -f "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
@@ -93,6 +91,7 @@ for weight in Regular Bold Light; do
     unzip -p "$TEMP_DIR/yeomil.zip" "YeomilMonoNerdFont-$weight.ttf" > "$TEMP_DIR/yeomil-$weight.ttf"
     install -m 644 "$TEMP_DIR/yeomil-$weight.ttf" "$HOME/.local/share/fonts/YeomilMonoNerdFont-$weight.ttf"
 done
+install -Dm644 "$DOTFILES/home/.local/share/fonts/InterNerdFont-Regular.otf" "$HOME/.local/share/fonts/InterNerdFont-Regular.otf"
 fc-cache -f
 
 echo "Installation complete. Matching ~/.config files were overwritten."
